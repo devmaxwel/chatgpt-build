@@ -4,7 +4,9 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
+import useSWR from "swr";
 import { toast } from "react-hot-toast";
+import ModelSelection from "./ModelSelection";
 type Props = {
   id: string;
 };
@@ -12,7 +14,9 @@ const ChatInput = ({ id }: Props) => {
   const { data: session } = useSession();
 
   //   Use useSWR to fetch data from an API endpoint
-  const model = "text-davinci-003";
+  const { data: model } = useSWR("/model", {
+    fallbackData: "text-davinci-003",
+  });
 
   const [prompt, setPrompt] = useState("");
   const handleSubmission = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -91,7 +95,9 @@ const ChatInput = ({ id }: Props) => {
           <PaperAirplaneIcon className="h-5 w-5  hover:text-blue-700 -rotate-45" />
         </button>
       </form>
-      <div>{/* Model Selection */}</div>
+      <div className="md:hidden">
+        <ModelSelection />
+      </div>
     </div>
   );
 };
